@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const productRoutes = require('./routes/productRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 
 const app = express();
@@ -12,6 +13,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Coffee shop API is Alive!' });
 });
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
