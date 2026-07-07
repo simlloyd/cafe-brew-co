@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Cafe Brew Co</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    
+    <!-- NAVBAR -->
+     <nav class="navbar">
+        <a href="index.html" class="nav-logo">☕ Cafe Brew Co</a>
+        <div class="nav-links">
+            <a href="product.html">Menu</a>
+            <span id="nav-user"></span>
+            <a href="auth.html" id="nav-auth">Login</a>
+            <a href="cart.html" id="nav-cart">Cart</a>
+            <a href="orders.html" id="nav-orders">Orders</a>
+            <a href="#" id="nav-logout" onclick="logout()">Logout</a>
+        </div>
+     </nav>
+
+     <!-- LOGIN FORM -->
+      <div class="form-container">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="">Email</label>
+            <input type="email" id="login-email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+            <label for="">Password</label>
+            <input type="password" id="login-password" placeholder="********">
+        </div>
+        <button class="btn" style="width:100%" onclick="handleLogin()">Login</button>
+        <p style="text-align:center; margin-top:16px;">
+            No account? <a href="#" onclick="showRegister()" style="color:#c8622a;">Register here</a>
+        </p>
+      </div>
+
+      <!-- ===== REGISTER ===== -->
+       <div class="form-container" id="register-form" style="display:none;">
+        <h2>Create Account</h2>
+        <div class="form-group">
+            <label for="">Name</label>
+            <input type="text" id="reg-name" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+            <label for="">Email</label>
+            <input type="email" id="reg-email" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+            <label for="">Password</label>
+            <input type="password" id="reg-password" placeholder="********" />
+        </div>
+        <div class="form-group">
+            <label for="">Addreaa</label>
+            <input type="text" id="reg-address" placeholder="Your address">
+        </div>
+        <div class="form-group">
+            <label for="">Phone</label>
+            <input type="text" id="reg-phone" placeholder="09xxxxxxxxx" />
+        </div>
+        <button class="btn" style="width:100%" onclick="handleRegister()">Create Account</button>
+        <p style="text-align:center; margin-top:16px;">
+            Already have an account? <a href="#" onclick="showLogin()" style="color:#c8622a;">Login here</a>
+        </p>
+       </div>
+
+       <script src="js/api.js"></script>
+       <script src="js/app.js"></script>
+       <script>
+        function showRegister() {
+            document.querySelector('.form-container').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.querySelector('.form-container').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const data = await login({ email, password });
+            if (data.token) {
+                window.location.href = 'index.html';
+            } else {
+                alert(data.message);
+            }
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const address = document.getElementById('reg-address').value;
+            const phone = document.getElementById('reg-phone').value;
+            const data = await register({ name, email, password, address, phone });
+            if (data.user) {
+                alert('Registration successfull! Please login.');
+                showLogin();
+            } else {
+                alert(data.message);
+            }
+        }
+       </script>
+</body>
+</html>

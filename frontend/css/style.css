@@ -1,0 +1,235 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fdf6ee;
+    color: #3b2a1a;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background-color: #3b2a1a;
+    color: #fdf6ee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-logo {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #f5c97a;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+.nav-links a {
+    color: #fdf6ee;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+.nav-links a:hover {
+    color: #f5c97a;
+}
+#nav-user {
+    color: #f5c97a;
+    font-weight: bold;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: #c8622a;
+    color: #fff;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+.btn:hover {
+    background-color: #a34e20;
+}
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid #c8622a;
+    color: #c8622a;
+}
+.btn-outline:hover {
+    background-color: #c8622a;
+    color: #fff;
+}
+
+/* ===== HERO ===== */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background-color: #f5e6d0;
+}
+.hero h1 {
+    font-size: 3rem;
+    color: #3b2a1a;
+    margin-bottom: 16px;
+}
+.hero p {
+    font-size: 1.2rem;
+    color: #7a5c3e;
+    margin-bottom: 32px;
+}
+
+/* ===== SECTION ===== */
+.section {
+    padding: 60px 40px;
+}
+.section-title {
+    font-size: 1.8rem;
+    margin-bottom: 32px;
+    color: #3b2a1a;
+    text-align: center;
+}
+
+/* ===== PRODUCT CARDS ===== */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+}
+.product-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.product-card:hover {
+    transform: translateY(-4px);
+}
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background-color: #f5e6d0;
+}
+.product-card-body {
+    padding: 16px;
+}
+.product-card-body h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+.product-card-body p {
+    font-size: 0.85rem;
+    color: #7a5c3e;
+    margin-bottom: 12px;
+}
+.product-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #c8622a;
+}
+
+/* ===== FORMS ===== */
+.form-container {
+    max-width: 480px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #3b2a1a;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #7a5c3e;
+}
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+}
+.form-group input:focus {
+    border-color: #c8622a;
+}
+
+/* ===== CART ===== */
+.cart-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.cart-total {
+    text-align: right;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #3b2a1a;
+    margin: 24px 0;
+}
+
+/* ===== ORDERS ===== */
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.order-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-preparing { background: #cce5ff; color: #004085; }
+.status-completed { background: #d4edda; color: #155724; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+
+/* ===== MESSAGE ====== */
+.message {
+    text-align: center;
+    padding: 20px;
+    color: #7a5c3e;
+    font-size: 1rem;
+}
