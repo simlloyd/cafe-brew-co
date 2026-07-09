@@ -11,7 +11,6 @@ const addToCart = async (req, res) => {
         }
 
         let cart = await Cart.findOne({ user: req.user._id });
-
         if (!cart) {
             cart = new Cart({ user: req.user._id, items: [] });
         }

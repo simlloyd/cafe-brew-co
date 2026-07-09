@@ -281,3 +281,59 @@ a {
     font-size: 3rem;
     background-color: #f5e6d0;
 }
+
+/* ===== PRODUCT DETAIL ===== */
+.product-detail-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 40px;
+}
+.product-detail-img img {
+    width: 100%;
+    border-radius: 12px;
+}
+.product-detail-info h1 {
+    font-size: 2rem;
+    margin: 12px 0;
+    color: #3b2a1a;
+}
+.product-detail-desc {
+    color: #7a5c3e;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+/* ===== QUANTITY SELECTOR ===== */
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.quantity-selector button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #c8622a;
+    background: transparent;
+    color: #c8622a;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.quantity-selector button:hover {
+    background: #c8622a;
+    color: #fff;
+}
+.quantity-selector span {
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}

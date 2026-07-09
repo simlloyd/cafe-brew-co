@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | Cafe Brew Co</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ===== NAVBAR ===== -->
+     <nav class="navbar">
+        <a href="index.html" class="nav-logo">☕ Cafe Brew Co</a>
+        <div class="nav-links">
+            <a href="products.html">Menu</a>
+            <span id="nav-user"></span>
+            <a href="auth.html" id="nav-auth">Login</a>
+            <a href="cart.html" id="nav-cart">Cart</a>
+            <a href="orders.html" id="nav-orders">Orders</a>
+            <a href="#" id="nav-logout" onclick="logout()">Logout</a>
+        </div>
+     </nav>
+
+     <!-- ===== CART SECTION ===== -->
+      <section class="section">
+        <h2 class="section-title">Your Cart</h2>
+        <div class="cart-container" id="cart-container">
+            <p class="message">Loading cart...</p>
+        </div>
+      </section>
+
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        async function loadCart() {
+            if (!isLoggedIn()) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            const cart = await getCart();
+            const container = document.getElementById('cart-container');
+
+            if (!cart.items || cart.items.length === 0) {
+                container.innerHTML = `
+                <p class="message">Your cart is empty.</p>
+                <div style="text-align:center;">
+                    <a href="products.html" class="btn">Browse Menu</a>
+                    </div>
+                    `;
+                    return;
+            }
+
+            const total = cart.items.reduce((sum, item) => {
+                return sum + item.product.price * item.quantity;
+            }, 0);
+
+            container.innerHTML = `
+            ${cart.items.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h3>${item.product.name}</h3>
+                        <p style="color:#7a5c3e;">₱${item.product.price} x ${item.quantity}</p>
+                    </div>
+                    <div class="cart-item-right">
+                        <p class="product-price">₱${item.product.price * item.quantity}</p>
+                        <button class="btn btn-outline" style="padding:6px 14px; font-size:0.85rem;"
+                        onclick="handleRemove('${item.product._id}')">Remove</button>
+                        </div>
+                        </div>
+            `).join('')} 
+            <div class="cart-total">Total: ₱${total}</div>
+            <div style="display:flex; gap:16px; justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="handleClearCart()">Clear Cart</button>
+                <button class="btn" onclick="handleCheckout()">Checkout</button>
+                </div>
+            `;
+        }
+
+        async function handleRemove(productId) {
+            await removeFromCart(productId);
+            loadCart();
+        }
+
+        async function handleClearCart() {
+            await fetch('http://localhost:5000/api/cart', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            loadCart();
+        }
+
+        async function handleCheckout() {
+            const data = await placeOrder();
+            if (data.totalAmount !== undefined) {
+                alert(`Order placed successfully! Total: ₱${data.totalAmount}`);
+                window.location.href = 'orders.html';
+            } else {
+                alert(data.message);
+            }
+        }
+        loadCart();
+      </script>
+    
+</body>
+</html>

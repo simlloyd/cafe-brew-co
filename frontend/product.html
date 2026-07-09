@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu | Cafe Brew Co</title>
+    <title>Product | Cafe Brew Co</title>
     <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
     <!-- ===== NAVBAR ===== -->
-    <nav class="navbar">
+     <nav class="navbar">
         <a href="index.html" class="nav-logo">☕ Cafe Brew Co</a>
         <div class="nav-links">
             <a href="products.html">Menu</a>
@@ -19,79 +19,85 @@
             <a href="orders.html" id="nav-orders">Orders</a>
             <a href="#" id="nav-logout" onclick="logout()">Logout</a>
         </div>
-    </nav>
+     </nav>
 
-    <!-- ===== PRODUCTS SECTION ===== -->
-     <section class="section">
-        <h2 class="section-title">Our Menu</h2>
+     <!-- ===== PRODUCT DETAIL ===== -->
+      <section class="section">
+        <div class="product-detail" id="product-detail">
+            <p class="message">Loading product....</p>
+        </div>
+      </section>
 
-        <!-- ===== CATEGORY FILTERS ===== -->
-         <div class="filters">
-            <button class="filter-btn active" onclick="filterProducts('All')">All</button>
-            <button class="filter-btn" onclick="filterProducts('Coffee')">Coffee</button>
-            <button class="filter-btn" onclick="filterProducts('Non-Coffee')">Non-Coffee</button>
-            <button class="filter-btn" onclick="filterProducts('Pastry')">Pastry</button>
-         </div>
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        async function loadProduct() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
 
-         <!-- ===== PRODUCTS GRID ===== -->
-          <div class="products-grid" id="products-grid">
-            <p class="message">Loading producs...</p>
-          </div>
-     </section>
-
-     <script src="js/api.js"></script>
-     <script src="js/app.js"></script>
-     <script>
-        let allProducts = [];
-
-        async function loadProducts(){
-            allProducts = await getProducts();
-            renderProducts(allProducts);
-        }
-
-        function renderProducts(products) {
-            const grid = document.getElementById('products-grid');
-
-            if (products.length === 0) {
-                grid.innerHTML = '<p class="message">No products found.</p>';
+            if (!id) {
+                window.location.href = 'products.html';
                 return;
             }
 
-            grid.innerHTML = products.map(product => `
-            <div class="product-card" onclick="window.location.href='product.html?id=${product._id}'">
-                <div class="product-img-placeholder">
-                    ${product.image
-                    ? `<img src="${product.image}" alt="${product.name}" />`
-                    : `<div class="no-image">☕</div>`
-                    }
-                    </div>
-                    <div class="product-card-body">
-                        <h3>${product.name}</h3>
-                        <p>${product.description}</p>
-                        <div class="product-card-footer">
-                            <span class="product-price">₱${product.price}</span>
-                            <span class="product-tag">${product.category}</span>
-                            </div>
-                            </div>
-                            </div>
-            `).join('');
-        }
+            const response = await fetch(`http://localhost:5000/api/products/${id}`);
+            const product = await response.json();
 
-        function filterProducts(category) {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent === category) btn.classList.add('active');
-            });
-
-            if (category === 'All') {
-                renderProducts(allProducts);
-            } else {
-                const filtered = allProducts.filter(p => p.category === category);
-                renderProducts(filtered);
+            const detail = document.getElementById('product-detail');
+            detail.innerHTML = `
+            <a href="products.html" class="btn btn-outline" style="margin-bottom:24px; display:inline-block;">
+                <- Back to Menu
+                </a>
+                <div class="product-detail-card">
+                    <div class="product-detail-img">
+                        ${product.image
+                        ? `<img src="${product.image}" alt="${product.name}" />`
+                        : `<div class="no-image" style="height:300px; font-size:5rem;">☕</div>`
+                        } 
+                        </div> 
+                        <div class="product-detail-info">
+                            <span class="product-tag">${product.category} ${product.temperature !== 'N/A' ? '· ' + product.temperature : ''}</span>
+                            <h1>${product.name}</h1>
+                            <p class="product-detail-desc">${product.description}</p>
+                            <p class="product-price" style="font-size:1.8rem;">₱${product.price}</p>
+                            <p style="color:#7a5c3e; margin-bottom:24px;">stock: ${product.stock} available</p>
+                            <div class="quantity-selector">
+                                <button onclick="changeQty(-1)">-</button>
+                                <span id="qty">1</span>
+                                <button onclick="changeQty(1)">+</button>
+                                </div>
+                                <button class="btn" style="margin-top:24px; width:100%;" onclick="handleAddToCart('${product._id}')">
+                                    Add to Cart
+                                    </button>
+                                    </div>
+                                    </div>
+                                     `;
+                                }
+            function changeQty(amount) {
+                const qtyEl = document.getElementById('qty');
+                const current = parseInt(qtyEl.textContent);
+                const newQty = current + amount;
+                if (newQty >= 1) qtyEl.textContent = newQty;
             }
-        }
 
-        loadProducts();
-     </script>
+            async function handleAddToCart(productId) {
+                if (!isLoggedIn()) {
+                    alert('Please login to add items to cart!');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                const quantity = parseInt(document.getElementById('qty').textContent);
+                const data = await addToCart(productId, quantity);
+                if (data.items) {
+                    alert('Added to cart successfully!');
+                    window.location.href = 'cart.html';
+                } else {
+                    alert(data.message);
+                }
+            }
+
+            loadProduct();
+      </script>
+    
 </body>
 </html>
