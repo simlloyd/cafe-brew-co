@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+     <nav class="navbar">
+        <a href="index.html" class="nav-logo">☕ Cafe Brew Co Admin</a>
+        <div class="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="products.html">Products</a>
+            <a href="orders.html">Orders</a>
+            <span id="nav-user"></span>
+            <a href="#" onclick="adminLogout()">Logout</a>
+        </div>
+     </nav>
+
+     <!-- ===== DASHBOARD ===== -->
+      <section class="section">
+        <h2 style="color: #f5c97a; margin-bottom: 32px;">Welcome to the Admin Panel</h2>
+        <div class="dashboard-cards">
+            <div class="dashboard-cards" onclick="window.location.href='products.html'"> 
+                <div class="dashboard-cards-icon">📦</div>
+                <h3>Manage Products</h3>
+                <p>Add, edit, or delete coffee products</p>
+            </div>
+            <div class="dashboard-cards" onclick="window.location.href='orders.html'">
+                <div class="dashboard-cards-icon">🧾</div>
+                <h3>Manage Orders</h3>
+                <p>View and Update customer orders</p>
+            </div>
+        </div>
+      </section>
+
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        checkAdminAuth();
+      </script>
+    
+</body>
+</html>

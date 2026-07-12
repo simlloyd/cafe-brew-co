@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Cafe Brew Co</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <div class="login-wrapper">
+         <div class="login-card">
+            <h1>☕ Cafe Brew Co</h1>
+            <h2>Admin Panel</h2>
+            <div class="form-group">
+                <label for="">Email</label>
+                <input type="email" id="email" placeholder="admin@gmail.com" />
+            </div>
+            <div class="form-group">
+                <label for="">Password</label>
+                <input type="password" id="password" placeholder="********" />
+            </div>
+            <button class="btn" onclick="handleLogin()">Login</button>
+         </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        if (isAdminLoggedIn()) {
+            window.location.href = 'index.html';
+        } 
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const data = await adminLogin({ email, password });
+
+            if (data.token && data.user.role === 'admin') {
+                window.location.href = 'index.html';
+            } else if (data.token && data.user.role !== 'admin') {
+                alert('Acces denied. Admin accounts only.');
+            } else {
+                alert(data.message || 'Login failed. ');
+            }
+        }
+    </script>
+    
+</body>
+</html>

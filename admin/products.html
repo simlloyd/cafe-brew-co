@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Admin</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">☕ Cafe Brew Co Admin</a>
+        <div class="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="products.html">Products</a>
+            <a href="orders.html">Orders</a>
+            <span id="nav-user"></span>
+            <a href="#" onclick="adminLogout()">Logout</a>
+        </div>
+    </nav>
+
+    <!-- ===== PRODUCTS SECTION ===== -->
+     <section class="section">
+        <div class="section-header">
+            <h2>Manage Products</h2>
+            <button class="btn" onclick="openAddModal()">+ Add Product</button>
+        </div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Temperature</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="products-table-body">
+                <tr><td colspan="6" class="message">Loading products ...</td></tr>
+            </tbody>
+        </table>
+     </section>
+
+     <!-- ===== ADD/EDIT MODAL ===== -->
+      <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h2 id="modal-title">Add Product</h2>
+            <input type="hidden" id="product-id" />
+            <div class="form-group">
+                <label for="">Name</label>
+                <input type="text" id="product-name" placeholder="Product name" />
+            </div>
+            <div class="form-group">
+                <label for="">Description</label>
+                <input type="text" id="product-description" placeholder="Short description" />
+            </div>
+            <div class="form-group">
+                <label for="">Price (₱)</label>
+                <input type="number" id="product-price" placeholder="0" />
+            </div>
+            <div class="form-group">
+                <label for="">Category</label>
+                <select name="" id="product-category">
+                    <option value="Coffee">Coffee</option>
+                    <option value="Non-Coffee">Non-Coffee</option>
+                    <option value="Pastry">Pastry</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="">Temperature</label>
+                <select name="" id="product-temperature">
+                    <option value="Hot">Hot</option>
+                    <option value="Cold">Cold</option>
+                    <option value="N/A">N/A</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="">Stock</label>
+                <input type="number" id="product-stock" placeholder="0" />
+            </div>
+            <div class="form-group">
+                <label for="">Image URL (optional)</label>
+                <input type="text" id="product-image" placeholder="https://..." />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-sm" onclick="handleSaveProduct()">Save</button>
+            </div>
+        </div>
+      </div>
+
+      <script src="js/api.js"></script>
+      <script src="js/app.js"></script>
+      <script>
+        checkAdminAuth();
+
+        let productsList = [];
+
+        async function loadProducts() {
+            productsList = await getProducts();
+            const products = productsList;
+            // const products = await getProducts();
+            const tbody = document.getElementById('products-table-body');
+
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="message">No products found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map((product, index) => `
+            <tr>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>${product.temperature}</td>
+                <td>${product.price}</td>
+                <td>${product.stock}</td>
+                <td style="display:flex; gap:8px;">
+                    <button class="btn btn-outline btn-sm" onclick="openEditModal(${index})">Edit</button> 
+                    <button class="btn btn-danger btn-sm" onclick="handleDelete('${product._id}')">Delete</button>
+                    </td>
+                    </tr>
+                    `).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modal-title').textContent = 'Add Product';
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-category').value = 'Coffee';
+            document.getElementById('product-temperature').value = 'Hot';
+            document.getElementById('product-stock').value = '';
+            document.getElementById('product-image').value = '';
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function openEditModal(index) {
+            const product = productsList[index];
+            document.getElementById('modal-title').textContent = 'Edit Product';
+            document.getElementById('product-id').value = product._id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-description').value = product.description;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-temperature').value = product.temperature;
+            document.getElementById('product-stock').value = product.stock;
+            document.getElementById('product-image').value = product.image || '';
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        async function handleSaveProduct() {
+            const id = document.getElementById('product-id').value;
+            const productData = {
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                price: Number(document.getElementById('product-price').value),
+                category: document.getElementById('product-category').value,
+                temperature: document.getElementById('product-temperature').value,
+                stock: Number(document.getElementById('product-stock').value),
+                image: document.getElementById('product-image').value,
+            };
+
+            if (id) {
+                await updateProduct(id, productData);
+            } else {
+                await createProduct(productData)
+            }
+
+            closeModal();
+            loadProducts();
+        }
+
+        async function handleDelete(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                await deleteProduct(id);
+                loadProducts();
+            }
+        }
+
+        loadProducts();
+      </script>
+
+</body>
+</html> 
