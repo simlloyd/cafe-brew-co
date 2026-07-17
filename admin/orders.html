@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders | Admin</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+     <nav class="navbar">
+        <a href="index.html" class="nav-logo">☕ Cafe Brew Co Admin</a>
+        <div class="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="products.html">Products</a>
+            <a href="orders.html">Orders</a>
+            <span id="nav-user"></span>
+            <a href="#" onclick="adminLogout()">Logout</a>
+        </div>
+     </nav>
+
+     <!-- ===== ORDERS SECTION ===== -->
+      <section class="section">
+        <div class="section-header">
+            <h2>Manage Orders</h2>
+        </div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Item</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="orders-table-body">
+                <tr><td colspan="7" class="message">Loading orders...</td></tr>
+            </tbody>
+        </table>
+      </section>
+
+      <!-- ==== STATUS MODAL ===== -->
+       <div class="modal-overlay" id="modal-overlay">
+        <div class="modal"> 
+            <h2>Update Order Status</h2>
+            <input type="hidden" id="order-id" />
+            <div class="form-group">
+                <label for="">Status</label>
+                <select name="" id="order-status">
+                    <option value="Pending">Pending</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-sm" onclick="handleUpdateStatus()">Update</button>
+            </div>
+        </div>
+       </div>
+
+       <script src="js/api.js"></script>
+       <script src="js/app.js"></script>
+       <script>
+        checkAdminAuth();
+
+        async function loadOrders() {
+            const orders = await getAllOrders();
+            const tbody = document.getElementById('orders-table-body');
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="message">No orders found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+            <tr>
+                <td style="font-size:0.75rem;">${order._id}</td>
+                <td>
+                    <p>${order.user?.name || 'Unknown'}</p>
+                    <p style="font-size:0.8rem; color:#aaa;">${order.user?.email || ''}</p>
+                    </td>
+                    <td>
+                        ${order.items.map(item => `
+                        <p style="font-size:0.85rem;">${item.product?.name || 'Unknown'} x${item.quantity}</p>
+                        `).join('')}
+                        </td>
+                        <td>₱${order.totalAmount}</td>
+                        <td style="font-size:0.85rem;">
+                            ${new Date(order.createdAt).toLocaleDateString('en-PH', {
+                                year: 'numeric', month: 'short', day: 'numeric'
+                            })}
+                            </td>
+                            <td>
+                                <span class="order-status status-${order.status.toLowerCase()}">
+                                    ${order.status}
+                                    </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="openStatusModal('${order._id}', '${order.status}')">
+                                            Update
+                                            </button>
+                                            </td>
+                                            </tr>
+                                            `).join('');
+        }
+
+        function openStatusModal(id, currentStatus) {
+            document.getElementById('order-id').value = id;
+            document.getElementById('order-status').value = currentStatus;
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        async function handleUpdateStatus() {
+            const id = document.getElementById('order-id').value;
+            const status = document.getElementById('order-status').value;
+            await updateOrderStatus(id, status);
+            closeModal();
+            loadOrders();
+        }
+
+        loadOrders();
+        
+       </script>
+    
+</body>
+</html>
